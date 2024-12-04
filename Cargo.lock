@@ -10,6 +10,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "example_struct"
+version = "0.1.0"
+dependencies = [
+ "must_not_use",
+]
+
+[[package]]
 name = "must_not_use"
 version = "0.1.0"
 dependencies = [
