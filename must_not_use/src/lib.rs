@@ -1,15 +1,16 @@
 use proc_macro::TokenStream;
-use quote::quote;
-use syn::{parse_macro_input, Item, ItemEnum, ItemFn, ItemStruct, ReturnType, Type};
+use syn::{parse_macro_input, Item};
 
 mod shared;
-use shared::create_panic_on_use;
 
 mod functions;
 use functions::handle_fn;
 
 mod structs;
 use structs::handle_struct;
+
+mod enums;
+use enums::handle_enum;
 
 #[proc_macro_attribute]
 pub fn must_not_use(_attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -21,28 +22,4 @@ pub fn must_not_use(_attr: TokenStream, item: TokenStream) -> TokenStream {
         Item::Enum(enm) => handle_enum(enm),
         _ => panic!("#[must_not_use] can only be applied to functions, structs, or enums"),
     }
-}
-
-fn handle_enum(input_enum: ItemEnum) -> TokenStream {
-    let vis = &input_enum.vis;
-    let name = &input_enum.ident;
-    let generics = &input_enum.generics;
-    let variants = &input_enum.variants;
-
-    let output = quote! {
-        #[doc = "⚠️ This enum must NOT be used!"]
-        #vis enum #name #generics {
-            #variants
-        }
-
-        impl #generics Drop for #name #generics {
-            fn drop(&mut self) {
-                if std::thread::current().name() != Some("must_not_use_check") {
-                    panic!("🔥 YOU USED A MUST-NOT-USE ENUM! The fabric of reality tears! 🔥");
-                }
-            }
-        }
-    };
-
-    output.into()
 }

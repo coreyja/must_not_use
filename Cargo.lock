@@ -3,6 +3,13 @@
 version = 4
 
 [[package]]
+name = "example_enum"
+version = "0.1.0"
+dependencies = [
+ "must_not_use",
+]
+
+[[package]]
 name = "example_function"
 version = "0.1.0"
 dependencies = [
