@@ -29,7 +29,7 @@ fn handle_fn(mut input_fn: ItemFn) -> TokenStream {
 
     let output = quote! {
         // Our wrapper type and its implementation
-        #[derive(Debug)]
+        #[derive(Debug, Clone)]
         pub struct MustNotUse<T> {
             value: T,
         }
@@ -37,14 +37,6 @@ fn handle_fn(mut input_fn: ItemFn) -> TokenStream {
         impl<T> MustNotUse<T> {
             fn new(value: T) -> Self {
                 Self { value }
-            }
-        }
-
-        impl<T: Clone> Clone for MustNotUse<T> {
-            fn clone(&self) -> Self {
-                Self {
-                    value: self.value.clone(),
-                }
             }
         }
 
