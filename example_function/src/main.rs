@@ -11,6 +11,7 @@ fn main() {
 
     // This is supposed to panic
     let result = this_is_a_bad_function();
+    let result: u32 = *result;
     println!("Result: {}", result);
 
     println!("Main is done");

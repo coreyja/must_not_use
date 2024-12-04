@@ -2,12 +2,14 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{ItemFn, ReturnType, Type};
 
+use crate::shared::create_panic_on_use;
+
 pub fn handle_fn(mut input_fn: ItemFn) -> TokenStream {
     // Modify the return type to wrap it in MustNotUse
     if let ReturnType::Type(arrow, return_type) = &input_fn.sig.output {
         input_fn.sig.output = ReturnType::Type(
             *arrow,
-            Box::new(Type::Verbatim(quote! { MustNotUse<#return_type> })),
+            Box::new(Type::Verbatim(quote! { PanicOnUse<#return_type> })),
         );
     }
 
@@ -15,40 +17,17 @@ pub fn handle_fn(mut input_fn: ItemFn) -> TokenStream {
     let sig = &input_fn.sig;
     let body = &input_fn.block;
 
+    let wrapper = create_panic_on_use();
+
     let output = quote! {
         // Our wrapper type and its implementation
-        #[derive(Debug, Clone)]
-        pub struct MustNotUse<T> {
-            value: T,
-        }
-
-        impl<T> MustNotUse<T> {
-            fn new(value: T) -> Self {
-                Self { value }
-            }
-        }
-
-        impl<T> std::ops::Deref for MustNotUse<T> {
-            type Target = T;
-            fn deref(&self) -> &Self::Target {
-                panic!("🔥 YOU USED A MUST-NOT-USE VALUE! SHAME! SHAME! SHAME! 🔥");
-            }
-        }
-
-        impl<T> std::fmt::Display for MustNotUse<T> where T: std::fmt::Display {
-            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                use std::ops::Deref;
-
-                let inner: &T = self.deref();
-                write!(f, "{}", inner)
-            }
-        }
+        #wrapper
 
         // The modified function
         #vis #sig {
             let result = (|| #body)();
 
-            MustNotUse::new(result)
+            PanicOnUse::new(result)
         }
     };
 

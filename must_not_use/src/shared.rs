@@ -14,13 +14,13 @@ pub fn create_panic_on_use() -> proc_macro2::TokenStream {
       impl<T> std::ops::Deref for PanicOnUse<T> {
           type Target = T;
           fn deref(&self) -> &Self::Target {
-              panic!("🔥 YOU TRIED TO ACCESS A FIELD OF A MUST-NOT-USE STRUCT! 🔥")
+              panic!("🔥 YOU TRIED TO ACCESS A MUST-NOT-USE VALUE! 🔥")
           }
       }
 
       impl<T> std::ops::DerefMut for PanicOnUse<T> {
           fn deref_mut(&mut self) -> &mut Self::Target {
-              panic!("🔥 YOU TRIED TO MUTABLY ACCESS A FIELD OF A MUST-NOT-USE STRUCT! 🔥")
+              panic!("🔥 YOU TRIED TO MUTABLY ACCESS A MUST-NOT-USE VALUE! 🔥")
           }
       }
 
