@@ -13,8 +13,5 @@ fn main() {
     let result = this_is_a_bad_function();
     println!("Result: {}", result);
 
-    //sleep for 2 seconds
-    std::thread::sleep(std::time::Duration::from_secs(5));
-
     println!("Main is done");
 }

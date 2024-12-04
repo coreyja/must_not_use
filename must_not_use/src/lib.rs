@@ -66,9 +66,6 @@ fn handle_fn(mut input_fn: ItemFn) -> TokenStream {
 
         // The modified function
         #vis #sig {
-            use std::sync::atomic::AtomicUsize;
-            use std::sync::Arc;
-
             let result = (|| #body)();
 
             MustNotUse::new(result)
