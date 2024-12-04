@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use must_not_use::must_not_use;
 
 #[must_not_use]
@@ -16,7 +18,7 @@ impl Display for CursedEnum {
 }
 
 fn main() {
-    let x = CursedEnum::new_variant_a("Hello, world!".to_string());
+    let x = CursedEnum::new_varianta("Hello, world!".to_string());
     let y = CursedEnum::new_variantb(42);
 
     println!("{}", x);
